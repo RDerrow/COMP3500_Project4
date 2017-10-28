@@ -5,7 +5,6 @@
  * Declarations for test code and other miscellaneous functions.
  */
 
-#include <test_file.h>
 
 /* These are only actually available if OPT_SYNCHPROBS is set. */
 int catmousesem(int, char **);

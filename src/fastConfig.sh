@@ -1,5 +1,5 @@
 echo starting quick config.
-echo Target directory is ASST1
+echo Target directory is ASST2
 
 ./configure
 

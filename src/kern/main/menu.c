@@ -18,7 +18,6 @@
 #include "opt-sfs.h"
 #include "opt-net.h"
 
-
 #define _PATH_SHELL "/bin/sh"
 
 #define MAXMENUARGS  16
@@ -531,9 +530,6 @@ static struct {
 	{ "fs3",	writestress },
 	{ "fs4",	writestress2 },
 	{ "fs5",	createstress },
-
-	/*custom tests*/
-	{"ct1",		struct_test },
 
 	{ NULL, NULL }
 };

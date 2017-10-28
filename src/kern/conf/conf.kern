@@ -451,6 +451,3 @@ file		test/synchtest.c
 file		test/malloctest.c
 file		test/fstest.c
 optfile net	test/nettest.c
-
-file userprog/getpid_syscall.c
-file test/test_file.c

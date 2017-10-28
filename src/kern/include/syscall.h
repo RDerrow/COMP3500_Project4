@@ -7,7 +7,5 @@
 
 int sys_reboot(int code);
 
-int sys_getpid(pid_t *retval);
-
 
 #endif /* _SYSCALL_H_ */

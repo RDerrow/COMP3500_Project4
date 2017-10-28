@@ -353,10 +353,6 @@ fstest.o: ../../test/fstest.c ../../include/types.h machine/types.h \
   ../../include/synch.h ../../include/fs.h ../../include/vnode.h \
   ../../include/vfs.h ../../include/uio.h ../../include/test.h \
   ../../include/thread.h machine/pcb.h
-getpid_syscall.o: ../../userprog/getpid_syscall.c ../../include/types.h \
-  machine/types.h ../../include/kern/types.h ../../include/syscall.h \
-  ../../include/thread.h machine/pcb.h machine/setjmp.h \
-  ../../include/curthread.h ../../include/lib.h
 autoconf.o: ../../compile/ASST1/autoconf.c ../../include/types.h \
   machine/types.h ../../include/kern/types.h ../../include/lib.h \
   machine/setjmp.h ../../compile/ASST1/autoconf.h

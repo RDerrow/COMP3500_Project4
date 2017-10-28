@@ -439,16 +439,6 @@ fstest.o: ${S}/test/fstest.c
 SRCS+=${S}/test/fstest.c
 OBJS+=fstest.o
 
-getpid_syscall.o: ${S}/userprog/getpid_syscall.c
-	${COMPILE.c} ${S}/userprog/getpid_syscall.c
-SRCS+=${S}/userprog/getpid_syscall.c
-OBJS+=getpid_syscall.o
-
-test_file.o: ${S}/test/test_file.c
-	${COMPILE.c} ${S}/test/test_file.c
-SRCS+=${S}/test/test_file.c
-OBJS+=test_file.o
-
 autoconf.o: ${S}/compile/ASST2/autoconf.c
 	${COMPILE.c} ${S}/compile/ASST2/autoconf.c
 SRCS+=${S}/compile/ASST2/autoconf.c
