@@ -280,6 +280,7 @@ thread.o: ../../thread/thread.c ../../include/types.h machine/types.h \
   ../../include/scheduler.h ../../include/addrspace.h ../../include/vm.h \
   machine/vm.h opt-dumbvm.h ../../include/vnode.h opt-synchprobs.h
 pid_manager.o: ../../thread/pid_manager.c ../../include/pid_manager.h \
+  ../../include/types.h machine/types.h ../../include/kern/types.h \
   ../../include/synch.h
 main.o: ../../main/main.c ../../include/types.h machine/types.h \
   ../../include/kern/types.h ../../include/kern/errno.h \
@@ -344,7 +345,10 @@ fstest.o: ../../test/fstest.c ../../include/types.h machine/types.h \
   ../../include/synch.h ../../include/fs.h ../../include/vnode.h \
   ../../include/vfs.h ../../include/uio.h ../../include/test.h \
   ../../include/thread.h machine/pcb.h
-pid_managertest.o: ../../test/pid_managertest.c ../../include/test.h
+pid_managertest.o: ../../test/pid_managertest.c ../../include/test.h \
+  ../../include/pid_manager.h ../../include/types.h machine/types.h \
+  ../../include/kern/types.h ../../include/synch.h ../../include/lib.h \
+  machine/setjmp.h
 autoconf.o: ../../compile/ASST2/autoconf.c ../../include/types.h \
   machine/types.h ../../include/kern/types.h ../../include/lib.h \
   machine/setjmp.h ../../compile/ASST2/autoconf.h

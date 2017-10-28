@@ -1,8 +1,8 @@
 #ifndef _PID_MANAGER_H_
 #define _PID_MANAGER_H_
 
+#include <types.h>
 #include <synch.h>
-typedef int pid_t; //temp
 typedef int error_code; //temp
 
 

@@ -530,6 +530,8 @@ static struct {
 	{ "fs3",	writestress },
 	{ "fs4",	writestress2 },
 	{ "fs5",	createstress },
+	{ "st",		sampletest },
+	//TODO: add entry with a string for how you want to call the test function, and the test function name.
 
 	{ NULL, NULL }
 };

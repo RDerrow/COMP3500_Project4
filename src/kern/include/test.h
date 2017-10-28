@@ -5,6 +5,8 @@
  * Declarations for test code and other miscellaneous functions.
  */
 
+//TODO:ADD FUNCTION PROTOTYPES FOR TESTS RELATED TO PID_MANAGER
+int sampletest(int, char**);
 
 /* These are only actually available if OPT_SYNCHPROBS is set. */
 int catmousesem(int, char **);
