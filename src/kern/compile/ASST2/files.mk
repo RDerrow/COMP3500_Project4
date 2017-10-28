@@ -374,6 +374,11 @@ thread.o: ${S}/thread/thread.c
 SRCS+=${S}/thread/thread.c
 OBJS+=thread.o
 
+pid_manager.o: ${S}/thread/pid_manager.c
+	${COMPILE.c} ${S}/thread/pid_manager.c
+SRCS+=${S}/thread/pid_manager.c
+OBJS+=pid_manager.o
+
 main.o: ${S}/main/main.c
 	${COMPILE.c} ${S}/main/main.c
 SRCS+=${S}/main/main.c
@@ -438,6 +443,11 @@ fstest.o: ${S}/test/fstest.c
 	${COMPILE.c} ${S}/test/fstest.c
 SRCS+=${S}/test/fstest.c
 OBJS+=fstest.o
+
+pid_managertest.o: ${S}/test/pid_managertest.c
+	${COMPILE.c} ${S}/test/pid_managertest.c
+SRCS+=${S}/test/pid_managertest.c
+OBJS+=pid_managertest.o
 
 autoconf.o: ${S}/compile/ASST2/autoconf.c
 	${COMPILE.c} ${S}/compile/ASST2/autoconf.c

@@ -70,6 +70,8 @@ boot(void)
 		GROUP_VERSION, buildconfig, buildversion);
 	kprintf("\n");
 
+	kprintf("Derp\n");
+
 	ram_bootstrap();
 	scheduler_bootstrap();
 	thread_bootstrap();
