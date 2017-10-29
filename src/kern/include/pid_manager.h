@@ -10,7 +10,7 @@ typedef int error_code; //temp
 
 struct pid_info_block {
 
-	pid_t myparent;
+	pid_t my_parent;
 	int is_exited;
 	int exit_status;
 
@@ -23,7 +23,7 @@ struct pid_info_block {
 struct pid_manager {
 
 	//DATA
-	struct pid_info_block pid_info_blocks[MAX_PIDS];
+	struct pid_info_block *pid_info_blocks[MAX_PIDS];
 
 	int number_of_procs;
 	int next_pid;

@@ -1,4 +1,6 @@
 #include <pid_manager.h>
+#include <types.h>
+#include <lib.h>
 
 
 #define NULL 0 //deal with it
@@ -15,7 +17,19 @@ static error_code delete_pid_block(pid_t pid);
 
 
 //PRIVATE FUNCTION DEFINITIONS
+static
+pid_t get_parent(pid_t pid) {
+	assert(pid_manager != NULL);
+	struct pid_info_block *info_block = pid_manager->pid_info_blocks[pid];
+	return info_block->myparent;
+}
 
+static 
+int get_exit_status(pid_t pid) {
+	assert(pid_manager != NULL);
+	struct pid_info_block *info_block = pid_manager->pid_info_blocks[pid];
+	return info_block->exit_status;
+}
 
 
 
