@@ -1,6 +1,8 @@
 # COMP3500_Project4
 Mission Impossible
 
+# TEST
+
 # How to upload code
 1. Clone the repo onto your computer with: git clone https://github.com/RDerrow/COMP3500_Project4
 This is where all of the code for the project will reside. If you want to just make a copy of cs161 folder and place it into the repo folder (COMP3500_Project4) doing this everytime you make changes. Another option is to just put the entire cs161 folder into the COMP3500_Project4 folder  and cd into the COMP3500_Project4 folder to edit the code.
