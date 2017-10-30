@@ -43,13 +43,12 @@ struct pid_manager {
 	int (*get_exit_status)(pid_t);
 
 }; 
-
 //GLOBAL VARIABLE
 struct pid_manager* pid_manager;
 
 //Global Functions
 
-int create_pid_manager();
+struct pid_manager* create_pid_manager();
 void destroy_pid_manager();
 
 

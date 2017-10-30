@@ -18,38 +18,34 @@ static error_code delete_pid_block(pid_t pid);
 //PUBLIC FUNCTIONS HERE
 //These were declared in pid_manager.h
 
-int
+struct pid_manager*
 create_pid_manager()
 {
 
 
-	if(pid_manager)
-	{
-		return PREEXISTING_MANAGER;
-	}
+	struct pid_manager* new_man = NULL;	
 
-
-	//pid_manager is global
-	pid_manager = kmalloc(sizeof(struct pid_manager));
+	new_man = kmalloc(sizeof(struct pid_manager));
+	assert(pid_manager);
 
 	int i;
 	for (i = 0; i < MAX_PIDS; i++)
 	{
-		pid_manager->pid_info_blocks[i] = NULL;
+		new_man->pid_info_blocks[i] = NULL;
 	}
 
-	pid_manager->next_pid = 1;
-	pid_manager->pid_lock = lock_create("pid manager lock");
-	assert(pid_manager->pid_lock);
+	new_man->next_pid = 1;
+	new_man->pid_lock = lock_create("pid manager lock");
+	assert(new_man->pid_lock);
 
 	
-	pid_manager->get_parent = get_parent;
-	pid_manager->get_exit_status = get_exit_status;
+	new_man->get_parent = get_parent;
+	new_man->get_exit_status = get_exit_status;
 
 
 
 
-	return SUCCESS;
+	return new_man;
 }
 
 void
