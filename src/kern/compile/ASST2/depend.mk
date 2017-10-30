@@ -281,7 +281,7 @@ thread.o: ../../thread/thread.c ../../include/types.h machine/types.h \
   machine/vm.h opt-dumbvm.h ../../include/vnode.h opt-synchprobs.h
 pid_manager.o: ../../thread/pid_manager.c ../../include/pid_manager.h \
   ../../include/types.h machine/types.h ../../include/kern/types.h \
-  ../../include/synch.h
+  ../../include/synch.h ../../include/lib.h machine/setjmp.h
 main.o: ../../main/main.c ../../include/types.h machine/types.h \
   ../../include/kern/types.h ../../include/kern/errno.h \
   ../../include/kern/unistd.h ../../include/lib.h machine/setjmp.h \

@@ -3,7 +3,7 @@
 #include <lib.h>
 
 
-#define NULL 0 //deal with it
+//#define NULL 0 //NULL defined in types
 
 //PRIVATE FUNCTIONS PROTOTYPES
 static pid_t get_parent(pid_t pid);
@@ -21,7 +21,7 @@ static
 pid_t get_parent(pid_t pid) {
 	assert(pid_manager != NULL);
 	struct pid_info_block *info_block = pid_manager->pid_info_blocks[pid];
-	return info_block->myparent;
+	return info_block->my_parent;
 }
 
 static 

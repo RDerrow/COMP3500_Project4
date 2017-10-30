@@ -30,7 +30,8 @@ struct pid_manager {
 	struct lock* pid_lock;
 
 	//PUBLIC INTERFACE
-
+	pid_t (*getparent)(pid_t);
+	int (*get_exit_status)(pid_t);
 
 }; 
 
