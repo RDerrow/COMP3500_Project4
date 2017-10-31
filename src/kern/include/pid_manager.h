@@ -5,6 +5,7 @@
 #include <synch.h>
 typedef int error_code; //temp
 
+//Test that checkout works to switch branches.
 
 enum pid_error_code {
 	SUCCESS,
