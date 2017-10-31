@@ -444,6 +444,10 @@ thread_exit(void)
 
 	splhigh();
 
+
+	//TODO: Check for if thread has PID
+	//If thread has PID, call function from PID manager that handles function returns
+
 	if (curthread->t_vmspace) {
 		/*
 		 * Do this carefully to avoid race condition with
@@ -453,6 +457,8 @@ thread_exit(void)
 		curthread->t_vmspace = NULL;
 		as_destroy(as);
 	}
+
+	//TODO: Destroy curthread's filetable
 
 	if (curthread->t_cwd) {
 		VOP_DECREF(curthread->t_cwd);

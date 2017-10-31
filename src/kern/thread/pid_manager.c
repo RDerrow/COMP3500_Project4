@@ -4,15 +4,64 @@
 #include <synch.h>
 
 
-//#define NULL 0 //NULL defined in types
 
-//PRIVATE FUNCTIONS PROTOTYPES
+//PRIVATE FUNCTIONS PROTOTYPES (Please try to maintain these in the same order as the defs)
+struct pid_info_block* get_pid_block(pid_t pid);
 static pid_t get_parent(pid_t pid);
 static int get_exit_status(pid_t pid);
 static error_code delete_pid_block(pid_t pid);
 
 
-//static int create_pid_block(pid_t pid);
+
+//PRIVATE FUNCTION DEFINITIONS
+
+
+/*
+function: get_pid_block
+
+Inputs: pid number of target process
+
+Outputs:
+	Returns pointer to pid info block or returns null if target does not exist.
+
+Other Notes:
+	Will panic and crash OS if given a pid that is out of bounds.
+	//TODO: Consider if this is really the best way to handle this.
+
+*/
+struct pid_info_block*
+get_pid_block(pid_t pid)
+{
+
+	if (pid < 0 || pid > MAX_PIDS)
+	{
+		panic("The given pid value is invalid!\nI'm sorry master. I failed.");
+		return NULL;
+	}
+
+
+	struct pid_info_block* target = pid_manager->pid_info_blocks[pid - 1];
+
+	return target;
+}
+
+
+
+static
+pid_t get_parent(pid_t pid) {
+	assert(pid_manager != NULL);
+	struct pid_info_block *info_block = pid_manager->pid_info_blocks[pid];
+	return info_block->my_parent;
+}
+
+static 
+int get_exit_status(pid_t pid) {
+	assert(pid_manager != NULL);
+	struct pid_info_block *info_block = pid_manager->pid_info_blocks[pid];
+	return info_block->exit_status;
+}
+
+//TODO: add function to update system when process returns
 
 
 //PUBLIC FUNCTIONS HERE
@@ -54,20 +103,7 @@ destroy_pid_manager()
 
 
 
-//PRIVATE FUNCTION DEFINITIONS
-static
-pid_t get_parent(pid_t pid) {
-	assert(pid_manager != NULL);
-	struct pid_info_block *info_block = pid_manager->pid_info_blocks[pid];
-	return info_block->my_parent;
-}
 
-static 
-int get_exit_status(pid_t pid) {
-	assert(pid_manager != NULL);
-	struct pid_info_block *info_block = pid_manager->pid_info_blocks[pid];
-	return info_block->exit_status;
-}
 
 
 

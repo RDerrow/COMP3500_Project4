@@ -6,6 +6,7 @@
  */
 
 int sys_reboot(int code);
+//TODO: add prototypes for system call functions
 
 
 #endif /* _SYSCALL_H_ */

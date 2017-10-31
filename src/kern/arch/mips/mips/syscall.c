@@ -73,6 +73,7 @@ mips_syscall(struct trapframe *tf)
 		break;
 
 	    /* Add stuff here */
+		//TODO: add cases for fork, waitpid, execc, execv, and _exit
  
 	    default:
 		kprintf("Unknown syscall %d\n", callno);

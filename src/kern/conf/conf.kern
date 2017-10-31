@@ -383,6 +383,8 @@ file      main/menu.c
 file      userprog/loadelf.c
 file      userprog/runprogram.c
 file      userprog/uio.c
+file	  userprog/syscall_delegation.c
+
 
 #
 # Virtual memory system
