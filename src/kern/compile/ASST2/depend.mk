@@ -314,6 +314,10 @@ uio.o: ../../userprog/uio.c ../../include/types.h machine/types.h \
   ../../include/kern/types.h ../../include/lib.h machine/setjmp.h \
   ../../include/uio.h ../../include/thread.h machine/pcb.h \
   ../../include/curthread.h
+syscall_delegation.o: ../../userprog/syscall_delegation.c \
+  ../../include/types.h machine/types.h ../../include/kern/types.h \
+  ../../include/lib.h machine/setjmp.h ../../include/thread.h \
+  machine/pcb.h ../../include/synch.h ../../include/syscall.h
 arraytest.o: ../../test/arraytest.c ../../include/types.h machine/types.h \
   ../../include/kern/types.h ../../include/lib.h machine/setjmp.h \
   ../../include/array.h ../../include/test.h

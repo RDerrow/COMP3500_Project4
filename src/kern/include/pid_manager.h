@@ -8,18 +8,17 @@ typedef int error_code; //temp
 //Test that checkout works to switch branches.
 
 enum pid_error_code {
-	SUCCESS,
-	PREEXISTING_MANAGER,
-	PID_DOES_NOT_EXIST
+	SUCCESS = 0,
+	PID_OUT_OF_BOUNDS = -1,
+	PID_NOT_FOUND = -2
 };
-
-
 
 
 #define MAX_PIDS 1024
 
 struct pid_info_block {
 
+	pid_t my_pid;
 	pid_t my_parent;
 	int is_exited;
 	int exit_status;
@@ -49,7 +48,7 @@ struct pid_manager* pid_manager;
 
 //Global Functions
 
-struct pid_manager* create_pid_manager();
+int create_pid_manager();
 void destroy_pid_manager();
 
 
