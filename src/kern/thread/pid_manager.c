@@ -22,7 +22,6 @@ struct pid_manager*
 create_pid_manager()
 {
 
-
 	struct pid_manager* new_man = NULL;	
 
 	new_man = kmalloc(sizeof(struct pid_manager));
@@ -41,8 +40,6 @@ create_pid_manager()
 	
 	new_man->get_parent = get_parent;
 	new_man->get_exit_status = get_exit_status;
-
-
 
 
 	return new_man;
