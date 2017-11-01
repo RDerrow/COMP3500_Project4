@@ -18,11 +18,11 @@ int sampletest(int useless, char** really_useless)
 static int recursive_fork(int i, char** blah)
 {
 
-	if (i < 100)
-	{
 
-		thread_fork("fb", i+1, NULL, recursive_fork, NULL);
-		thread_fork("fb", i+1, NULL, recursive_fork, NULL);
+	if (i < 6)
+	{
+		thread_fork("fb", i + 1, NULL, recursive_fork, NULL);
+		thread_fork("fb", i + 1, NULL, recursive_fork, NULL);
 
 
 	}
@@ -37,10 +37,7 @@ static int recursive_fork(int i, char** blah)
 int forkbomb(int i, char** really_useless)
 {
 
-		thread_fork("fb", 1, NULL, recursive_fork, NULL);
-		thread_fork("fb", 1, NULL, recursive_fork, NULL);
-
-
+	thread_fork("fb", 0, NULL, recursive_fork, NULL);
 
 	return 0;
 }

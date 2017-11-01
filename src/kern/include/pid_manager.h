@@ -4,6 +4,8 @@
 #include <types.h>
 #include <synch.h>
 #include <array.h>
+#include <thread.h>
+
 
 typedef int error_code; //temp
 
@@ -16,7 +18,7 @@ enum pid_error_code {
 };
 
 
-#define MAX_PIDS 1024
+#define MAX_PIDS 100
 
 struct pid_info_block {
 
@@ -45,9 +47,9 @@ struct pid_manager {
 	pid_t (*get_parent)(pid_t pid);
 	int (*get_exit_status)(pid_t pid);
 	int (*is_finished)(pid_t pid);
-	int (*add_process)(pid_t* caller_pid_pointer, pid_t parent, int iskernel);
-	int (*end_process)(pid_t pid, int exit_status);
-	int (*wait_pid)(pid_t, pid_t);
+	int (*inform_process_add)(struct thread* newguy, pid_t parent);
+	int (*inform_process_exit)(pid_t pid, int exit_status);
+	int (*wait_pid)(pid_t target, pid_t caller, int* process_exit_status);
 
 }; 
 //GLOBAL VARIABLE

@@ -282,8 +282,9 @@ thread.o: ../../thread/thread.c ../../include/types.h machine/types.h \
   ../../include/pid_manager.h ../../include/synch.h
 pid_manager.o: ../../thread/pid_manager.c ../../include/pid_manager.h \
   ../../include/types.h machine/types.h ../../include/kern/types.h \
-  ../../include/synch.h ../../include/array.h ../../include/lib.h \
-  machine/setjmp.h
+  ../../include/synch.h ../../include/array.h ../../include/thread.h \
+  machine/pcb.h machine/setjmp.h ../../include/lib.h \
+  ../../include/kern/errno.h
 main.o: ../../main/main.c ../../include/types.h machine/types.h \
   ../../include/kern/types.h ../../include/kern/errno.h \
   ../../include/kern/unistd.h ../../include/lib.h machine/setjmp.h \
@@ -355,8 +356,8 @@ fstest.o: ../../test/fstest.c ../../include/types.h machine/types.h \
 pid_managertest.o: ../../test/pid_managertest.c ../../include/test.h \
   ../../include/pid_manager.h ../../include/types.h machine/types.h \
   ../../include/kern/types.h ../../include/synch.h ../../include/array.h \
-  ../../include/lib.h machine/setjmp.h ../../include/thread.h \
-  machine/pcb.h
+  ../../include/thread.h machine/pcb.h machine/setjmp.h \
+  ../../include/lib.h
 autoconf.o: ../../compile/ASST2/autoconf.c ../../include/types.h \
   machine/types.h ../../include/kern/types.h ../../include/lib.h \
   machine/setjmp.h ../../compile/ASST2/autoconf.h

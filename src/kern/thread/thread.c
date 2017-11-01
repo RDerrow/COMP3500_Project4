@@ -208,7 +208,7 @@ thread_bootstrap(void)
 	numthreads = 1;
 
 	//TODO: TEMPORARY: This cannot stay here.
-	pid_manager->add_process(&(me->pid), NULL, 1);
+	pid_manager->inform_process_add(me, NULL);
 
 	if (me->pid == 0)
 	{
@@ -313,10 +313,19 @@ thread_fork(const char *name,
 	 * temporarily too low, which would obviate its reason for
 	 * existence.
 	 */
+
+	result = pid_manager->inform_process_add(newguy, curthread->pid);
+	if (result != 0)
+	{
+		goto fail;
+	}
+
+
+
 	numthreads++;
 
 	//REVISIT:
-	pid_manager->add_process(&(newguy->pid), curthread->pid, 1);
+
 
 	/* Done with stuff that needs to be atomic */
 	splx(s);
@@ -461,7 +470,7 @@ thread_exit(void)
 	splhigh();
 
 
-	pid_manager->end_process(curthread->pid, 0); //TODO: figure out exit status
+	pid_manager->inform_process_exit(curthread->pid, 0); //TODO: figure out exit status
 
 	if (curthread->t_vmspace) {
 		/*

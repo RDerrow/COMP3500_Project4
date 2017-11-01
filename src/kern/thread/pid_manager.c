@@ -2,6 +2,7 @@
 #include <types.h>
 #include <lib.h>
 #include <synch.h>
+#include <kern/errno.h>
 
 
 
@@ -71,10 +72,11 @@ int
 should_free_pid(struct pid_info_block* block)
 {
 
-	if (block->is_exited = 0)
+	if (block->is_exited == 0)
 		return 0;
 
-	if (block->my_parent == NULL || is_pid_free(block->my_parent) == 1)
+	//TEMP: make system so that pid 1 cannot hold open other procs.
+	if (block->my_parent < 2 || is_pid_free(block->my_parent) == 1)
 		return 1;
 
 	if (get_pid_block(block->my_parent)->is_exited == 1)
@@ -90,29 +92,31 @@ static
 int
 scan_free()
 {
-	int start = pid_manager->next_pid;
 
-	if (is_pid_free(start))
-	{
-		return start;
-	}
-
-	int i;
-
-	do {
-
-	i = (i % MAX_PIDS) + 1;
-
-
-	} while (!is_pid_free(i) && i != start);
-
-
-	if (i == start)
+	if (pid_manager->number_of_procs == MAX_PIDS)
 	{
 		return -1;
 	}
 
 
+	int start = pid_manager->next_pid;
+	int i = start;
+	int considered_start = 0;
+
+	while (!is_pid_free(i) && !(i == start && considered_start))
+	{
+		if (i == start)
+			considered_start = 1;
+
+		i = (i % MAX_PIDS) + 1; //This expression is chosen because i goes from [1,MAX_PID]
+	}
+
+	if (i == start && considered_start)
+	{
+		return -1;
+	}
+
+	assert(i > 0 && i <= MAX_PIDS);
 
 	return i;
 }
@@ -194,15 +198,7 @@ destroy_pid_block(struct pid_info_block* block)
 
 //TODO: add function to update system when process returns
 
-//PUBLIC PROTOTYPES (Only for functions that will go into the struct)
-/*
-static pid_t get_parent(pid_t pid);
-static int get_exit_status(pid_t pid);
-static int add_process(pid_t* p_pid, pid_t parent, int is_kernel);
-static int end_process(pid_t pid, int exit_status);
-static int wait_pid(pid_t caller, pid_t pid);
-
-*/
+//PUBLIC FUNCTIONS (available through function pointers in struct)
 
 /*
 Function: get_parent
@@ -260,7 +256,7 @@ int get_exit_status(pid_t pid) {
 	struct pid_info_block *info_block = get_pid_block(pid);
 
 	if (info_block == NULL)
-		return -1; //TODO: fix with actual status for nonexistent process
+		return -1;
 
 
 	return info_block->exit_status;
@@ -269,21 +265,20 @@ int get_exit_status(pid_t pid) {
 
 static 
 int 
-add_process(pid_t* p_pid, pid_t parent_id, int is_kernel)
+inform_process_add(struct thread* newguy, pid_t parent_id)
 {
+	//This must execute atomically.
 
+	pid_t* p_pid = &newguy->pid;
 	
-
-	(void)is_kernel; //will need this later to fix a problem
 
 	*p_pid = 0;
 
 	if (pid_manager->number_of_procs == MAX_PIDS)
 	{
-		return -1;
+		kprintf("No PIDs available");
+		return EAGAIN;
 	}
-
-	lock_acquire(pid_manager->lock);
 
 	int i = scan_free();
 
@@ -298,23 +293,29 @@ add_process(pid_t* p_pid, pid_t parent_id, int is_kernel)
 	if (!block)
 	{
 		lock_release(pid_manager->lock);
-		return -1;
+		return ENOMEM;
 	}
-
-	*p_pid = i;
-	set_pid_block(i, block);
-	pid_manager->next_pid = i + 1;
-	pid_manager->number_of_procs++;
 
 	struct pid_info_block* parent_block = get_pid_block(parent_id);
 
 	if (parent_block)
 	{
-		array_add(parent_block->children, (void*)block);
-
+		int array_error = array_add(parent_block->children, (void*)block);
+		if (array_error)
+			{
+				destroy_pid_block(block);
+				return ENOMEM;
+			} 
 	}
 
-	lock_release(pid_manager->lock);
+	*p_pid = i;
+	set_pid_block(i, block);
+	pid_manager->next_pid = (i % MAX_PIDS) + 1;
+	pid_manager->number_of_procs++;
+
+
+
+
 
 	kprintf("Process %d was added by %d.\n", *p_pid, parent_id);
 	
@@ -325,14 +326,14 @@ add_process(pid_t* p_pid, pid_t parent_id, int is_kernel)
 
 static
 int
-end_process(pid_t pid, int exit_status)
+inform_process_exit(pid_t pid, int exit_status)
 {
 	
 
 	struct pid_info_block* block = get_pid_block(pid);
 
 	if (!block)
-		return -1; //TODO: replace with proper return code
+		return EINVAL;
 
 	
 
@@ -375,17 +376,13 @@ end_process(pid_t pid, int exit_status)
 
 static 
 int 
-wait_pid(pid_t caller, pid_t pid)
+wait_pid(pid_t pid, pid_t caller, int* process_exit_status)
 {
 
-	if (caller == pid)
-		return -1; //TODO: set errno
 
-	if (get_parent(pid) != caller)
-		return -1; //TODO: set errno
+	if (!validate_pid(pid) || get_parent(pid) != caller)
+		return EINVAL;
 
-	if (!(validate_pid(caller) && validate_pid(pid)))
-		return -1; //TODO: set errno
 
 	lock_acquire(pid_manager->lock);
 
@@ -398,11 +395,11 @@ wait_pid(pid_t caller, pid_t pid)
 
 	
 
-	int block_exit_status = get_pid_block(pid)->exit_status;
+	*process_exit_status = get_pid_block(pid)->exit_status;
 
 	lock_release(pid_manager->lock);
 
-	return block_exit_status;	
+	return 0;	
 }
 
 //PUBLIC FUNCTIONS HERE
@@ -429,8 +426,8 @@ pid_manager_bootstrap()
 	
 	pid_manager->get_parent = get_parent;
 	pid_manager->get_exit_status = get_exit_status;
-	pid_manager->add_process = add_process;
-	pid_manager->end_process = end_process;
+	pid_manager->inform_process_add = inform_process_add;
+	pid_manager->inform_process_exit = inform_process_exit;
 	pid_manager->wait_pid = wait_pid;
 
 	return;
@@ -452,17 +449,4 @@ destroy_pid_manager()
 	kfree(pid_manager->lock);
 	kfree(pid_manager);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
