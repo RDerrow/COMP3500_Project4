@@ -45,6 +45,7 @@ struct pid_manager {
 
 	//PUBLIC INTERFACE
 	pid_t (*get_parent)(pid_t pid);
+	pid_t (*get_pid)(struct thread* thread);
 	int (*get_exit_status)(pid_t pid);
 	int (*is_finished)(pid_t pid);
 	int (*inform_process_add)(struct thread* newguy, pid_t parent);

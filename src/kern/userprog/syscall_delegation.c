@@ -1,8 +1,9 @@
 #include <types.h>
 #include <lib.h>
+#include <curthread.h>
 #include <thread.h>
-#include <synch.h>
 #include <syscall.h>
+#include <pid_manager.h>
 
 
 /*
@@ -46,7 +47,13 @@ algorithm:
 
 
 //sys_getpid
-
+int
+sys_getpid(pid_t* retval)
+{
+	
+	*retval = pid_manager->get_pid(curthread);
+	return 0;
+}
 
 
 //sys_exit

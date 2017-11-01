@@ -282,6 +282,12 @@ thread_fork(const char *name,
 	/* Interrupts off for atomicity */
 	s = splhigh();
 
+	result = pid_manager->inform_process_add(newguy, curthread->pid);
+	if (result != 0)
+	{
+		goto fail;
+	}
+
 	/*
 	 * Make sure our data structures have enough space, so we won't
 	 * run out later at an inconvenient time.
@@ -314,11 +320,7 @@ thread_fork(const char *name,
 	 * existence.
 	 */
 
-	result = pid_manager->inform_process_add(newguy, curthread->pid);
-	if (result != 0)
-	{
-		goto fail;
-	}
+
 
 
 

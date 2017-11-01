@@ -227,6 +227,20 @@ pid_t get_parent(pid_t pid) {
 
 static
 int
+get_pid(struct thread* thread)
+{
+
+	pid_t pid = thread->pid;
+
+	assert(pid == get_pid_block(pid)->my_pid);
+
+	return pid;
+
+
+}
+
+static
+int
 is_pid_exited(pid_t pid)
 {
 
@@ -425,6 +439,7 @@ pid_manager_bootstrap()
 
 	
 	pid_manager->get_parent = get_parent;
+	pid_manager->get_pid = get_pid;
 	pid_manager->get_exit_status = get_exit_status;
 	pid_manager->inform_process_add = inform_process_add;
 	pid_manager->inform_process_exit = inform_process_exit;
