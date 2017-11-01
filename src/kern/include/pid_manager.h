@@ -3,6 +3,8 @@
 
 #include <types.h>
 #include <synch.h>
+#include <array.h>
+
 typedef int error_code; //temp
 
 //Test that checkout works to switch branches.
@@ -20,6 +22,7 @@ struct pid_info_block {
 
 	pid_t my_pid;
 	pid_t my_parent;
+	struct array* children;
 	int is_exited;
 	int exit_status;
 
@@ -36,11 +39,14 @@ struct pid_manager {
 
 	int number_of_procs;
 	int next_pid;
-	struct lock* pid_lock;
+	struct lock* lock;
 
 	//PUBLIC INTERFACE
-	pid_t (*get_parent)(pid_t);
-	int (*get_exit_status)(pid_t);
+	pid_t (*get_parent)(pid_t pid);
+	int (*get_exit_status)(pid_t pid);
+	int (*add_process)(pid_t* caller_pid_pointer, pid_t parent, int iskernel);
+	int (*end_process)(pid_t pid, int exit_status);
+	int (*wait_pid)(pid_t, pid_t);
 
 }; 
 //GLOBAL VARIABLE
@@ -48,8 +54,10 @@ struct pid_manager* pid_manager;
 
 //Global Functions
 
-int create_pid_manager();
+void pid_manager_bootstrap();
 void destroy_pid_manager();
+
+
 
 
 
