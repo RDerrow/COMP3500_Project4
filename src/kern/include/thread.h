@@ -20,6 +20,8 @@ struct thread {
 	char *t_name;
 	const void *t_sleepaddr;
 	char *t_stack;
+
+	pid_t pid;
 	
 	/**********************************************************/
 	/* Public thread members - can be used by other code      */

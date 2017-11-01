@@ -16,6 +16,7 @@
 #include <vm.h>
 #include <syscall.h>
 #include <version.h>
+#include <pid_manager.h>
 
 /*
  * These two pieces of data are maintained by the makefiles and build system.
@@ -74,6 +75,7 @@ boot(void)
 
 	ram_bootstrap();
 	scheduler_bootstrap();
+	pid_manager_bootstrap();
 	thread_bootstrap();
 	vfs_bootstrap();
 	dev_bootstrap();

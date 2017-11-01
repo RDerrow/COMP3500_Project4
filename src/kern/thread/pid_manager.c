@@ -9,6 +9,7 @@
 static struct pid_info_block* get_pid_block(pid_t pid);
 static void set_pid_block(pid_t pid, struct pid_info_block* block);
 static int is_pid_free(pid_t pid);
+static int should_free_pid(struct pid_info_block* block);
 static int scan_free();
 static error_code delete_pid_block(pid_t pid);
 static int validate_pid(pid_t pid);
@@ -63,6 +64,27 @@ is_pid_free(pid_t pid)
 	return get_pid_block(pid) == NULL;
 
 }
+
+
+static
+int
+should_free_pid(struct pid_info_block* block)
+{
+
+	if (block->is_exited = 0)
+		return 0;
+
+	if (block->my_parent == NULL || is_pid_free(block->my_parent) == 1)
+		return 1;
+
+	if (get_pid_block(block->my_parent)->is_exited == 1)
+		return 1;
+	
+
+	return 0;
+}
+
+
 
 static
 int
@@ -159,6 +181,8 @@ destroy_pid_block(struct pid_info_block* block)
 		return;
 	}
 
+	kprintf("Deleted pid %d\n", block->my_pid);
+
 	array_destroy(block->children);
 	cv_destroy(block->exit_cv);
 	kfree(block);
@@ -205,16 +229,25 @@ pid_t get_parent(pid_t pid) {
 	return info_block->my_parent;
 }
 
+static
+int
+is_pid_exited(pid_t pid)
+{
+
+	return get_pid_block(pid)->is_exited;
+
+
+}
+
+
 
 /*
 Function: get_exit_status
 
-Inputs: get parent of input pid
+Inputs: get_exit_status
 
 Outputs:
-	Return -1 if pid is invalid for any reason (out of bounds or not found)
-	Return 0 if process has no parent
-	Return parent_pid if successfull
+
 
 Other Notes:
 	This function should never crash the system.
@@ -227,7 +260,7 @@ int get_exit_status(pid_t pid) {
 	struct pid_info_block *info_block = get_pid_block(pid);
 
 	if (info_block == NULL)
-		return 0; //TODO: fix with actual status for nonexistent process
+		return -1; //TODO: fix with actual status for nonexistent process
 
 
 	return info_block->exit_status;
@@ -236,16 +269,21 @@ int get_exit_status(pid_t pid) {
 
 static 
 int 
-add_process(pid_t* p_pid, pid_t parent, int is_kernel)
+add_process(pid_t* p_pid, pid_t parent_id, int is_kernel)
 {
+
+	
 
 	(void)is_kernel; //will need this later to fix a problem
 
+	*p_pid = 0;
+
 	if (pid_manager->number_of_procs == MAX_PIDS)
 	{
-		*p_pid = 0;
 		return -1;
 	}
+
+	lock_acquire(pid_manager->lock);
 
 	int i = scan_free();
 
@@ -255,17 +293,30 @@ add_process(pid_t* p_pid, pid_t parent, int is_kernel)
 		panic("Someone filled all the PIDs without telling the manager");
 	}
 
-	struct pid_info_block* block = create_pid_block(i, parent);
+	struct pid_info_block* block = create_pid_block(i, parent_id);
 
 	if (!block)
 	{
+		lock_release(pid_manager->lock);
 		return -1;
 	}
 
+	*p_pid = i;
 	set_pid_block(i, block);
 	pid_manager->next_pid = i + 1;
 	pid_manager->number_of_procs++;
 
+	struct pid_info_block* parent_block = get_pid_block(parent_id);
+
+	if (parent_block)
+	{
+		array_add(parent_block->children, (void*)block);
+
+	}
+
+	lock_release(pid_manager->lock);
+
+	kprintf("Process %d was added by %d.\n", *p_pid, parent_id);
 	
 	return 0;
 
@@ -288,14 +339,18 @@ end_process(pid_t pid, int exit_status)
 	lock_acquire(pid_manager->lock);
 
 	cv_broadcast(block->exit_cv, pid_manager->lock);
+
 	
+	block->is_exited = 1;
+	block->exit_status = exit_status;
+
 	struct pid_info_block* child;
 	int i;
 	for (i = 0; i < array_getnum(block->children); i++)
 	{
 		child = array_getguy(block->children, i);
 		
-		if (child->is_exited)
+		if (should_free_pid(child))
 		{
 			set_pid_block(child->my_pid, NULL);
 			destroy_pid_block(child);
@@ -303,17 +358,15 @@ end_process(pid_t pid, int exit_status)
 		}
 	}
 
-	
-	block->is_exited = 1;
-	block->exit_status = exit_status;
-
-	if (!get_parent(pid))
+	if (should_free_pid(block))
 	{
 		pid_manager->number_of_procs--;
-		destroy_pid_block(block);
 		set_pid_block(pid, NULL);
+		destroy_pid_block(block);
 	}
 
+
+	kprintf("Process %d finished with exit code %d.\n", pid, exit_status);
 	assert(pid_manager->number_of_procs >= 0);
 	lock_release(pid_manager->lock);
 	return 0;
