@@ -7,6 +7,9 @@
 
 int sys_reboot(int code);
 //TODO: add prototypes for system call functions
+void _exit(int exitcode);
+int sys_fork(struct trapframe *tf, pid_t *retval);
+
 
 
 #endif /* _SYSCALL_H_ */

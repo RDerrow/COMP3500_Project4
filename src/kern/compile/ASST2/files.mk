@@ -404,6 +404,11 @@ uio.o: ${S}/userprog/uio.c
 SRCS+=${S}/userprog/uio.c
 OBJS+=uio.o
 
+syscall_delegation.o: ${S}/userprog/syscall_delegation.c
+	${COMPILE.c} ${S}/userprog/syscall_delegation.c
+SRCS+=${S}/userprog/syscall_delegation.c
+OBJS+=syscall_delegation.o
+
 arraytest.o: ${S}/test/arraytest.c
 	${COMPILE.c} ${S}/test/arraytest.c
 SRCS+=${S}/test/arraytest.c

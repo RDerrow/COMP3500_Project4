@@ -448,6 +448,11 @@ thread_exit(void)
 	//TODO: Check for if thread has PID
 	//If thread has PID, call function from PID manager that handles function returns
 
+	if (curthread->t_pid) {
+		//TODO: Perform function calls with respect to pid
+		kprintf("curthread->pid does exist.");
+	}
+
 	if (curthread->t_vmspace) {
 		/*
 		 * Do this carefully to avoid race condition with
@@ -459,6 +464,11 @@ thread_exit(void)
 	}
 
 	//TODO: Destroy curthread's filetable
+
+	//if (curthread->filetable) {
+		//TODO: Perform function call to destroy filetable.
+		//kprintf("curthread->filetable does exist.");
+	//}
 
 	if (curthread->t_cwd) {
 		VOP_DECREF(curthread->t_cwd);

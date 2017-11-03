@@ -6,6 +6,8 @@
 #include <machine/trapframe.h>
 #include <kern/callno.h>
 #include <syscall.h>
+#include <curthread.h>
+#include <thread.h>
 
 
 /*
@@ -74,7 +76,9 @@ mips_syscall(struct trapframe *tf)
 
 	    /* Add stuff here */
 		//TODO: add cases for fork, waitpid, execc, execv, and _exit
- 
+ 	    case SYS__exit:
+		err = sys_exit(tf->tf_a0);
+		break;
 	    default:
 		kprintf("Unknown syscall %d\n", callno);
 		err = ENOSYS;
@@ -106,6 +110,14 @@ mips_syscall(struct trapframe *tf)
 
 	/* Make sure the syscall code didn't forget to lower spl */
 	assert(curspl==0);
+}
+
+void
+_exit(int exitcode)
+{
+  //Call inform exit process in pid_manager
+  //pid_manager->inform_exit();
+  thread_exit();
 }
 
 void

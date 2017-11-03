@@ -3,6 +3,7 @@
 #include <thread.h>
 #include <synch.h>
 #include <syscall.h>
+#include <curthread.h>
 
 
 /*
@@ -15,7 +16,22 @@ These should be machine independent.
 
 
 
+/*int
+sys_fork(struct trapframe *tf, pid_t *retval) {
 
+	struct trapframe *new_tf = kmalloc(sizeof(struct trapframe));
+	new_tf = *tf;
+
+	int result = 0;//thread_fork(curthread->t_name, new_tf, 0, 	child_thread, retval);
+
+	if (result != 0) {
+		kfree(new_tf);
+		return result;
+	}
+
+	return result;
+
+}*/
 /*
 function: sys_fork
 
@@ -50,3 +66,9 @@ algorithm:
 
 
 //sys_exit
+void
+sys_exit(int code)
+{
+	_exit(code);
+	panic("Thread did not exit correctly!");
+}
