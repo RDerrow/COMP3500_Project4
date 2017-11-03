@@ -44,7 +44,26 @@ algorithm:
 
 
 //sys_waitpid
+int
+sys_waitpid(pid_t* retval, pid_t target, char **args)
+{
+	if (args != NULL)
+		return EINVAL; 
 
+	pid_t parent = curthread -> pid;
+	int exit_status = pid_manager->get_exit_status(target);	
+	int man_wait_val = pid_manager->wait_pid(target, parent, exit_status);
+
+	if (man_wait_val != 0) {
+		errno = man_wait_val;
+		return -1;
+	}
+
+	retval = target;
+	return retval;
+
+	
+}
 
 //sys_getpid
 int
