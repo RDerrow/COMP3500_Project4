@@ -3,11 +3,8 @@
 #include <curthread.h>
 #include <thread.h>
 #include <syscall.h>
-<<<<<<< HEAD
 #include <curthread.h>
-=======
 #include <pid_manager.h>
->>>>>>> master
 
 
 /*

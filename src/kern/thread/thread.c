@@ -474,10 +474,6 @@ thread_exit(void)
 
 	pid_manager->inform_process_exit(curthread->pid, 0); //TODO: figure out exit status
 
-	if (curthread->t_pid) {
-		//TODO: Perform function calls with respect to pid
-		kprintf("curthread->pid does exist.");
-	}
 
 	if (curthread->t_vmspace) {
 		/*
