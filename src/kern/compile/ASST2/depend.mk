@@ -323,7 +323,8 @@ syscall_delegation.o: ../../userprog/syscall_delegation.c \
   ../../include/types.h machine/types.h ../../include/kern/types.h \
   ../../include/lib.h machine/setjmp.h ../../include/curthread.h \
   ../../include/thread.h machine/pcb.h ../../include/syscall.h \
-  ../../include/pid_manager.h ../../include/synch.h ../../include/array.h
+  ../../include/kern/errno.h ../../include/pid_manager.h \
+  ../../include/synch.h ../../include/array.h
 arraytest.o: ../../test/arraytest.c ../../include/types.h machine/types.h \
   ../../include/kern/types.h ../../include/lib.h machine/setjmp.h \
   ../../include/array.h ../../include/test.h
