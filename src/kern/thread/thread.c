@@ -13,6 +13,7 @@
 #include <addrspace.h>
 #include <vnode.h>
 #include "opt-synchprobs.h"
+#include <pid_manager.h>
 
 /* States a thread can be in. */
 typedef enum {
@@ -58,9 +59,10 @@ thread_create(const char *name)
 	thread->t_vmspace = NULL;
 
 	thread->t_cwd = NULL;
-	
-	// If you add things to the thread structure, be sure to initialize
-	// them here.
+
+	thread->pid = NULL;
+
+
 	
 	return thread;
 }
@@ -205,6 +207,17 @@ thread_bootstrap(void)
 	/* Number of threads starts at 1 */
 	numthreads = 1;
 
+	//TODO: TEMPORARY: This cannot stay here.
+	pid_manager->inform_process_add(me, NULL);
+
+	if (me->pid == 0)
+	{
+		panic("thread_bootstrap: Cannot assign initial pid");
+	}
+	
+	// If you add things to the thread structure, be sure to initialize
+	// them here.
+
 	/* Done */
 	return me;
 }
@@ -269,6 +282,12 @@ thread_fork(const char *name,
 	/* Interrupts off for atomicity */
 	s = splhigh();
 
+	result = pid_manager->inform_process_add(newguy, curthread->pid);
+	if (result != 0)
+	{
+		goto fail;
+	}
+
 	/*
 	 * Make sure our data structures have enough space, so we won't
 	 * run out later at an inconvenient time.
@@ -300,7 +319,15 @@ thread_fork(const char *name,
 	 * temporarily too low, which would obviate its reason for
 	 * existence.
 	 */
+
+
+
+
+
 	numthreads++;
+
+	//REVISIT:
+
 
 	/* Done with stuff that needs to be atomic */
 	splx(s);
@@ -445,8 +472,7 @@ thread_exit(void)
 	splhigh();
 
 
-	//TODO: Check for if thread has PID
-	//If thread has PID, call function from PID manager that handles function returns
+	pid_manager->inform_process_exit(curthread->pid, 0); //TODO: figure out exit status
 
 	if (curthread->t_pid) {
 		//TODO: Perform function calls with respect to pid

@@ -279,17 +279,21 @@ thread.o: ../../thread/thread.c ../../include/types.h machine/types.h \
   ../../include/kern/errno.h ../../include/array.h machine/spl.h \
   machine/pcb.h ../../include/thread.h ../../include/curthread.h \
   ../../include/scheduler.h ../../include/addrspace.h ../../include/vm.h \
-  machine/vm.h opt-dumbvm.h ../../include/vnode.h opt-synchprobs.h
+  machine/vm.h opt-dumbvm.h ../../include/vnode.h opt-synchprobs.h \
+  ../../include/pid_manager.h ../../include/synch.h
 pid_manager.o: ../../thread/pid_manager.c ../../include/pid_manager.h \
   ../../include/types.h machine/types.h ../../include/kern/types.h \
-  ../../include/synch.h ../../include/lib.h machine/setjmp.h
+  ../../include/synch.h ../../include/array.h ../../include/thread.h \
+  machine/pcb.h machine/setjmp.h ../../include/lib.h \
+  ../../include/kern/errno.h
 main.o: ../../main/main.c ../../include/types.h machine/types.h \
   ../../include/kern/types.h ../../include/kern/errno.h \
   ../../include/kern/unistd.h ../../include/lib.h machine/setjmp.h \
   machine/spl.h ../../include/test.h ../../include/synch.h \
   ../../include/thread.h machine/pcb.h ../../include/scheduler.h \
   ../../include/dev.h ../../include/vfs.h ../../include/vm.h machine/vm.h \
-  ../../include/syscall.h ../../include/version.h
+  ../../include/syscall.h ../../include/version.h \
+  ../../include/pid_manager.h ../../include/array.h
 menu.o: ../../main/menu.c ../../include/types.h machine/types.h \
   ../../include/kern/types.h ../../include/kern/errno.h \
   ../../include/kern/unistd.h ../../include/kern/limits.h \
@@ -317,9 +321,15 @@ uio.o: ../../userprog/uio.c ../../include/types.h machine/types.h \
   ../../include/curthread.h
 syscall_delegation.o: ../../userprog/syscall_delegation.c \
   ../../include/types.h machine/types.h ../../include/kern/types.h \
+<<<<<<< HEAD
   ../../include/lib.h machine/setjmp.h ../../include/thread.h \
   machine/pcb.h ../../include/synch.h ../../include/syscall.h \
   ../../include/curthread.h
+=======
+  ../../include/lib.h machine/setjmp.h ../../include/curthread.h \
+  ../../include/thread.h machine/pcb.h ../../include/syscall.h \
+  ../../include/pid_manager.h ../../include/synch.h ../../include/array.h
+>>>>>>> master
 arraytest.o: ../../test/arraytest.c ../../include/types.h machine/types.h \
   ../../include/kern/types.h ../../include/lib.h machine/setjmp.h \
   ../../include/array.h ../../include/test.h
@@ -353,8 +363,9 @@ fstest.o: ../../test/fstest.c ../../include/types.h machine/types.h \
   ../../include/thread.h machine/pcb.h
 pid_managertest.o: ../../test/pid_managertest.c ../../include/test.h \
   ../../include/pid_manager.h ../../include/types.h machine/types.h \
-  ../../include/kern/types.h ../../include/synch.h ../../include/lib.h \
-  machine/setjmp.h
+  ../../include/kern/types.h ../../include/synch.h ../../include/array.h \
+  ../../include/thread.h machine/pcb.h machine/setjmp.h \
+  ../../include/lib.h
 autoconf.o: ../../compile/ASST2/autoconf.c ../../include/types.h \
   machine/types.h ../../include/kern/types.h ../../include/lib.h \
   machine/setjmp.h ../../compile/ASST2/autoconf.h

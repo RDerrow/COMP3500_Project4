@@ -74,6 +74,10 @@ mips_syscall(struct trapframe *tf)
 		err = sys_reboot(tf->tf_a0);
 		break;
 
+	    case SYS_getpid:	
+		err = sys_getpid(retval);
+		break;
+
 	    /* Add stuff here */
 		//TODO: add cases for fork, waitpid, execc, execv, and _exit
  	    case SYS__exit:
