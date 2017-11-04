@@ -1,0 +1,208 @@
+DATA STRUCTURES
+pid_manager: Contains a dictionary of process information blocks.
+It maintains the pid system. It holds function pointers and serves as
+the public interface for the pid system. It is used by _exit, fork,
+runprogram, and kill_thread.
+
+
+pid_info_block: Contains the information for the parent of the process,
+the pid of the process, the exit status, and the exit conditional
+variable.
+/***************************************************************************/
+DESIGN:
+execv:
+Requirements: 
+Executes a program
+Replaces the currently executing program with newly loaded program’s image
+Process id should be unchanged
+Should happen inside one process
+If it fails returns -1 and sets errno to an appropriate error code
+
+Error types:
+    ENODEV: The device prefix of program did not exist
+    ENOTDIR: A non-final component of program was not a directory
+    ENOENT: program did not exist
+    EISDIR: program is a directory
+    ENOEXEC: program is not in a recognizable executable file format, was for
+    the wrong platform, or contained invalid fields.
+    ENOMEM: insufficient virtual memory available.
+    E2BIG: The total size of the argument string is too large.
+    EIO: A hard I/O error occurred.
+    EFAULT: One of the args is an invalid pointer.
+
+Existing collaborators:
+    fork
+
+New collaborators:
+
+Logic:
+/***************************************************************************/
+fork
+Requirements:
+    Make a child from the parent process.
+    Should return 0 to clone and pid of child to parent.
+    Child should have a new pid and child should have a copy of the
+    stack and address space of the parent.
+    On error returns -1 and sets ERRNO to appropriate error code.
+    
+
+Error types:
+    EAGAIN: too many processes already exist.
+    ENOMEM: not enough memory was available.
+
+Existing collaborators:
+    thread_fork    
+
+New collaborators:
+    sys_fork
+    initialize_child (passed to thread_fork)
+    pid_manager
+    md_forkentry (exists as stub)
+    md_trapcp (will be added in MIPS)
+    as_copy (exists as stub)
+
+Logic:  
+in sys_fork:
+get tf of parent
+get vm_space of parent (in curthread)
+call thread_fork and pass in the above information and initialize_child
+function pointer. Also pass parent pid to initialize child via thread_fork
+
+
+in initialize_child:
+    create pid block for new process
+create stack in address space
+use as_copy to copy the address space of the old process
+place 0 as return value
+call md_forkentry to switch to user mode
+/***************************************************************************/
+
+waitpid
+Requirements:
+
+Error types:
+    EINVAL: The options argument requested and invalid or unsupported options
+    EFAULT: The status argument was an invalid pointer
+
+
+Existing collaborators:
+
+New collaborators:
+    pid_manager->wait_pid (technically a part of the pid_management system)
+    sys_waitpid
+
+Logic:  
+
+in sys_waitpid:
+inputs:
+retval (reference to return value)
+target pid    
+
+    if options were passed to function
+        errno = EINVAL
+        return -1
+
+    call pid_manager->wait_pid(target, parent, ref to exit_status)
+        target is an input argument. It is the pid we are waiting on.
+        parent = curthread->pid
+        int exit_status should be in this functions
+
+    if pid_manager->wait_pid does not return 0
+        set errno = return from pid_manager->wait_pid
+        return -1
+
+    return pid (by reference on retval)
+
+
+in pid_manager->wait_pid:  
+    check that target exists and that the caller is parent to target
+    if this is not true return EINVAL
+
+    acquire pid_manager lock
+
+    if target pid has not exited
+        wait on target's exit cv using pid_manager->lock
+
+    return (by reference) the exit status of the target
+
+    release pid_manager lock
+
+    return 0
+
+
+/***************************************************************************/
+_exit:
+Requirements:
+    Release all resources used by the process
+
+Error types:
+    No error codes because exit does not return anything.
+
+Existing collaborators:
+    thread_exit
+
+New collaborators:
+    thread_manager->inform_exit
+
+Logic:
+in: sys_exit:
+    gets exit code from trap frame passed in by mips_interrupt handler
+    call pid_manager->inform_exit (This will handle the function end in
+    the pid system)
+    call thread_exit which will free the vmspace and such
+
+/***************************************************************************/
+Pid_system:
+
+Requirements:
+    Manage unique id for each process    
+    Allow for retrieval of exit status of the child process
+    Maintain info about parent child relationships
+
+    Should release PIDS when appropriate
+    Allow for recycling of released PIDS
+
+Clarifications about function/ Design Decisions:
+When should PIDS be released:
+    When a process has no parents or when parent is kernel
+    Kernel cannot wait on a user process (This is such a huge loss.
+    I don’t know how we can deal with this.)
+    If process is started by kernel, set parent = NULL (This could be
+    an engineering problem later on. We can revisit this)
+    After parent gets return info from a process we can delete the
+    child process.
+    We cannot have multiple processes waiting on one process
+    A process may only wait on its children
+    Can kernel call fork?
+        Nope
+    Fork will assign the parent pid.
+    Processes started apart from fork will have no parent
+
+
+Data Structures:
+Struct pid_manager (is sort of a data structure)
+Static array of pid_info_block pointers of size max_processes
+Address of pid_info_block will map to the pid
+Integer containing number of processes
+Function pointers for all pid_manager functions
+
+
+Struct pid_info_block
+int my_parent
+int *my_children
+int is_exited
+Int exit_status
+Struct cv* exit_cv
+
+
+
+Functions:
+
+delete_pid_block(pid_t pid)
+get_my_parent(pid_t pid)
+bool is_my_child(pid_t me, pid_t test_pid)
+get_my_children(int pid)
+get_my_exit_status(pid_t pid)
+
+
+

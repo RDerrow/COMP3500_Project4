@@ -1,0 +1,29 @@
+Team Member Collaboration:
+Group:
+All members contirbuted through several design meetings and
+collaborative meetings about the project. Several design meetings
+were held during the course of the project in person at the library
+and over discord (voice call) and google docs. Other meetings were 
+held to discuss the implementation of the various system calls. Also
+done in person and over discord.
+
+Individual:
+
+Robert Derrow:
+Worked on getting the _exit system call working. This includes the
+_exit function and the sys_exit call.
+
+James Malloy:
+Daehyun Kim:
+
+Plan:
+1. Develop a design for one section of the project at a time
+starting with pid_manager. For the most part the team stuck to
+designing one section of the project and then moving on to the next.
+We did run into trouble when we tried to deligate the code between
+members because we quickly realized that pid_manager played a role
+in just about everything we did, so we had to wait for pid_manager
+to be finished before we could delegate different functions to
+different members.
+
+Changes we would make next time:
